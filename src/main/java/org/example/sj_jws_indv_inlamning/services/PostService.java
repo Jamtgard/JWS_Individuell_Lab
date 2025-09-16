@@ -1,7 +1,6 @@
 package org.example.sj_jws_indv_inlamning.services;
 
 import org.example.sj_jws_indv_inlamning.entities.Post;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 import java.util.List;
@@ -15,6 +14,6 @@ public interface PostService {
 
     String deletePost(Long id, JwtAuthenticationToken auth);
 
-    int countPosts();
+    int countPosts(JwtAuthenticationToken auth);
 
 }

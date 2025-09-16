@@ -56,7 +56,6 @@ public class PostServiceImpl implements PostService {
                 new ResourceNotFoundException("Post", "id", post.getId()));
 
         String sub = auth.getToken().getSubject();
-        // String username = auth.getToken().getClaimAsString("preferred_username");
 
         if (!sub.equals(entity.getAuthorId())){
             throw new AuthorizationDeniedException("Post","Owner", "update");
@@ -81,14 +80,19 @@ public class PostServiceImpl implements PostService {
 
         if (!isAdmin && !sub.equals(post.getAuthorId())) {
             throw new AuthorizationDeniedException("Post", "Admin & Owner", "Delete");
-
         }
+
         postRespository.delete(post);
         return "Deleted";
     }
 
     @Override
-    public int countPosts() {
+    public int countPosts(JwtAuthenticationToken auth) {
+        boolean isAdmin = checkIfAdmin(auth);
+
+        if (!isAdmin) {
+            throw new AuthorizationDeniedException("Post", "Admin", "Count");
+        }
         List<Post> posts = postRespository.findAll();
         return posts.size();
     }
@@ -107,18 +111,7 @@ public class PostServiceImpl implements PostService {
         MicroMethods.validateData("Post", "Content", post.getContent());
     }
 
-    /*
-    private Post transferValues(Post originalPost) {
-        Post copy = new Post();
-        copy.setTitle(originalPost.getTitle());
-        copy.setContent(originalPost.getContent());
-        return copy;
-    }
-
-     */
-
     private boolean checkIfAdmin(JwtAuthenticationToken auth) {
-
         return auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_myclient_ADMIN"));
     }

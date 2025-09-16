@@ -45,21 +45,24 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter))
-                )
-
-                .exceptionHandling(eh -> eh
-                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                        .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(401);
                             response.setContentType("application/json");
+                            String auth = request.getHeader("Authorization");
+                            String message = (auth == null || auth.isBlank() || !auth.startsWith("Bearer "))
+                                    ? "Missing Bearer Token" : "Invalid Bearer Token";
                             response.getWriter().write("""
                                     {
                                     "Status": 401,
                                     "Error": "Unauthorized",
-                                    "Message": "Missing Token",
-                                    "Path": %s"
+                                    "Message": "%s",
+                                    "Path": "%s"
                                     }
-                                    """.formatted(request.getRequestURI()));
-                        })
+                                    """.formatted(message, request.getRequestURI()));
+                                }
+                        )
+                )
+                .exceptionHandling(eh -> eh
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
                             response.setStatus(403);
                             response.setContentType("application/json");
