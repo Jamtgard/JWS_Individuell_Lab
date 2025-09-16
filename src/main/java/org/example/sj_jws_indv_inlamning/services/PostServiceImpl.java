@@ -23,6 +23,7 @@ public class PostServiceImpl implements PostService {
 
 //-- CRUD --------------------------------------------------------------------------------------------------------------
 
+
     @Override
     public List<Post> getPosts() {
         if (postRespository.findAll().isEmpty()) {
@@ -87,14 +88,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public int countPosts(JwtAuthenticationToken auth) {
-        boolean isAdmin = checkIfAdmin(auth);
-
-        if (!isAdmin) {
-            throw new AuthorizationDeniedException("Post", "Admin", "Count");
-        }
-        List<Post> posts = postRespository.findAll();
-        return posts.size();
+    public Long countPosts() {
+        return postRespository.count();
     }
 
     //-- Functionality -------------------------------------------------------------------------------------------------

@@ -47,7 +47,7 @@ public class PostController {
     }
 
     @GetMapping("/count")
-    public ResponseEntity<Integer> getPostCount(JwtAuthenticationToken authentication) {
-        return ResponseEntity.ok(postService.countPosts(authentication));
+    public ResponseEntity<Long> getPostCount() {
+        return ResponseEntity.ok(postService.countPosts());
     }
 }

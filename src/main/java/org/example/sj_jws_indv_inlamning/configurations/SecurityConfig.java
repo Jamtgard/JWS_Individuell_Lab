@@ -6,10 +6,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     private final JwtAuthConverter jwtAuthConverter;
@@ -25,6 +27,7 @@ public class SecurityConfig {
                 .csrf(csrf->csrf.disable())
                 .authorizeHttpRequests(auth ->
                         auth
+                                .requestMatchers("/error", "/error/**").permitAll()
                                 .requestMatchers("/h2-console/**").permitAll()
 
                                 .requestMatchers(HttpMethod.GET, "/api/v2/posts").authenticated()
@@ -33,7 +36,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/api/v2/newpost").hasRole("myclient_USER")
                                 .requestMatchers(HttpMethod.PUT, "/api/v2/updatepost").hasRole("myclient_USER")
 
-                                .requestMatchers(HttpMethod.DELETE, "/api/v2/deletepost/{id}").hasAnyRole("myclient_USER", "myclient_ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/api/v2/deletepost/**").hasAnyRole("myclient_USER", "myclient_ADMIN")
 
                                 .requestMatchers(HttpMethod.GET,"/api/v2/count").hasRole("myclient_ADMIN")
 

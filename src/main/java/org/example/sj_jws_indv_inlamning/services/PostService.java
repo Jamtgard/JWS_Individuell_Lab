@@ -14,6 +14,6 @@ public interface PostService {
 
     String deletePost(Long id, JwtAuthenticationToken auth);
 
-    int countPosts(JwtAuthenticationToken auth);
+    Long countPosts();
 
 }
